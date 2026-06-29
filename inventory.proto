@@ -1,0 +1,88 @@
+// ============================================================
+// COMPONENT 2: gRPC COMMUNICATION — PROTO DEFINITION
+// ============================================================
+// Defines the contract between the Order Service and the
+// Inventory Service. Using Protocol Buffers (binary encoding)
+// instead of JSON gives us:
+//   • ~3-10× smaller payloads over the wire
+//   • ~5× faster serialisation / deserialisation
+//   • Strongly typed contracts enforced at compile time
+//
+// Usage:
+//   protoc --ts_out=src/generated --proto_path=proto inventory.proto
+// ============================================================
+
+syntax = "proto3";
+
+package inventory;
+
+// ── Ingredient Availability Check ─────────────────────────────
+// Called by the Order Service BEFORE confirming a pizza order.
+// Ensures we never confirm an order when stock is insufficient.
+
+message CheckIngredientRequest {
+  string order_id       = 1;   // UUID of the pending order
+  string request_id     = 2;   // Trace/correlation ID from gateway
+  repeated OrderItem items = 3; // Items the customer wants
+}
+
+message OrderItem {
+  string product_id = 1;       // e.g., "PIZZA_MARGHERITA"
+  string name       = 2;       // Human-readable name
+  int32  quantity   = 3;       // How many units
+}
+
+message IngredientStatus {
+  string product_id   = 1;
+  bool   available    = 2;     // true = sufficient stock
+  int32  stock_level  = 3;     // current units in warehouse
+  string reason       = 4;     // populated when available = false
+}
+
+message CheckIngredientResponse {
+  bool   all_available = 1;    // true only if EVERY item has stock
+  repeated IngredientStatus statuses = 2;
+  string checked_at = 3;       // RFC-3339 timestamp
+}
+
+// ── Reserve Ingredients (2-Phase Commit style) ────────────────
+// After order is confirmed by Billing, hard-lock the ingredients
+// so concurrent orders cannot over-sell.
+
+message ReserveIngredientRequest {
+  string order_id = 1;
+  repeated OrderItem items = 2;
+  int32  hold_ttl_seconds = 3; // how long to keep reservation (e.g. 900)
+}
+
+message ReserveIngredientResponse {
+  bool   reserved     = 1;
+  string reservation_id = 2;   // opaque token; used to release/commit
+  string expires_at   = 3;     // RFC-3339 — when the hold expires
+}
+
+// ── Release / Commit Reservation ─────────────────────────────
+message CommitReservationRequest {
+  string reservation_id = 1;
+  bool   commit = 2;          // true = deduct stock; false = release hold
+}
+
+message CommitReservationResponse {
+  bool   success = 1;
+  string message = 2;
+}
+
+// ── Service Definition ────────────────────────────────────────
+service InventoryService {
+  // Step 1 — check before confirming to user (read-only, fast)
+  rpc CheckIngredients (CheckIngredientRequest)
+      returns (CheckIngredientResponse);
+
+  // Step 2 — reserve ingredients (write, after order accepted)
+  rpc ReserveIngredients (ReserveIngredientRequest)
+      returns (ReserveIngredientResponse);
+
+  // Step 3 — commit (on payment success) or release (on failure)
+  rpc CommitOrReleaseReservation (CommitReservationRequest)
+      returns (CommitReservationResponse);
+}
