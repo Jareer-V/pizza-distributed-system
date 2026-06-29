@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PizzaChain Dashboard</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    .wrap{font-family:"Anthropic Sans",system-ui,sans-serif;padding:0 0 16px;color:var(--text-primary)}
+    h2{font-size:16px;font-weight:500;margin-bottom:2px}
+    .sub{font-size:12px;color:var(--text-secondary);margin-bottom:16px}
+    .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+    .metric{background:var(--surface-1);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px}
+    .mlabel{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+    .mval{font-size:20px;font-weight:500;line-height:1}
+    .mdelta{font-size:10px;margin-top:3px}
+    .up{color:#1baf7a}.down{color:#e34948}.neu{color:var(--text-secondary)}
+    .panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panel{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:14px}
+    .ptitle{font-size:12px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500}
+    .bb{background:#e6f1fb;color:#185fa5}.gb{background:#eaf3de;color:#3b6d11}.ab{background:#faeeda;color:#854f0b}.rb{background:#fcebeb;color:#a32d2d}
+    .nrow{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px}
+    .nrow:last-child{border-bottom:none}
+    .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .dg{background:#008300}.dr{background:#d03b3b}
+    .nn{font-weight:500;flex:1}.nm{color:var(--text-muted)}.nc{font-weight:500;min-width:38px;text-align:right}
+    .fstep{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);align-items:flex-start}
+    .fstep:last-child{border-bottom:none}
+    .snum{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:1px}
+    .ftitle{font-size:11px;font-weight:500}.fdesc{font-size:10px;color:var(--text-secondary);line-height:1.35;margin-top:1px}.fsvc{font-size:10px;color:var(--text-muted);margin-top:2px}
+    .cb3{display:flex;gap:6px;margin-bottom:8px}
+    .cbs{flex:1;border-radius:6px;padding:8px 6px;text-align:center;border:0.5px solid var(--border);transition:opacity .3s}
+    .cbl{font-size:9px;font-weight:600;margin-bottom:1px}.cbd{font-size:9px;color:var(--text-muted);line-height:1.3}
+    .scl{background:#eaf3de;border-color:#3b6d11}.scl .cbl{color:#3b6d11}
+    .sop{background:#fcebeb;border-color:#a32d2d}.sop .cbl{color:#a32d2d}
+    .sho{background:#faeeda;border-color:#854f0b}.sho .cbl{color:#854f0b}
+    .srow{display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px}
+    .srow:last-child{border-bottom:none}
+    .sk{font-weight:500;min-width:44px}.sr{color:var(--text-secondary);flex:1}
+    .sbw{flex:1;height:4px;background:var(--surface-0,#f1efe8);border-radius:2px;overflow:hidden}
+    .sb{height:100%;border-radius:2px;transition:width .4s}
+    .sl{min-width:30px;text-align:right;font-size:10px}
+    .ctls{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    button{background:transparent;border:0.5px solid var(--border-strong,rgba(11,11,11,.25));border-radius:5px;padding:4px 9px;font-size:11px;cursor:pointer;color:var(--text-primary);font-family:inherit;transition:background .15s}
+    button:hover{background:var(--surface-0,#f1efe8)}
+    .log{background:var(--surface-0,#f1efe8);border-radius:6px;padding:8px 10px;font-family:monospace;font-size:10px;line-height:1.7;max-height:130px;overflow-y:auto;margin-top:8px;color:var(--text-secondary)}
+    .ll{display:flex;gap:6px}.lt{color:var(--text-muted);flex-shrink:0}.ls{font-weight:600}
+    .lok{color:#1baf7a}.lwrn{color:#eda100}.lerr{color:#e34948}.linf{color:#2a78d6}
+    .cbbar-wrap{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    .cbbar-track{flex:1;background:var(--surface-0);border-radius:4px;height:5px;overflow:hidden}
+    .cbbar{height:100%;border-radius:4px;transition:width .3s,background .3s}
+    .cbfails{font-size:10px;color:var(--text-muted);min-width:70px;text-align:right}
+    .idem-info{font-size:10px;color:var(--text-secondary);border-top:0.5px solid var(--border);padding-top:7px;margin-top:4px}
+    .nextnod{margin-top:8px;font-size:10px;color:var(--text-secondary)}
+    @media(max-width:580px){.grid5{grid-template-columns:repeat(2,1fr)}.panels{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>🍕 PizzaChain — Distributed Architecture Monitor</h2>
+    <p class="sub">5 distributed systems patterns — live simulation</p>
+
+    <div class="grid5">
+      <div class="metric"><div class="mlabel">Orders/min</div><div class="mval" id="opm">142</div><div class="mdelta up" id="opm-d">↑ 12% vs avg</div></div>
+      <div class="metric"><div class="mlabel">p99 latency</div><div class="mval" id="p99">38<span style="font-size:12px">ms</span></div><div class="mdelta neu">gRPC binary</div></div>
+      <div class="metric"><div class="mlabel">Healthy nodes</div><div class="mval" id="nodes">3<span style="font-size:12px">/3</span></div><div class="mdelta up" id="nd">All healthy</div></div>
+      <div class="metric"><div class="mlabel">Idempotent saves</div><div class="mval" id="idem">17</div><div class="mdelta up">No double-charge</div></div>
+      <div class="metric"><div class="mlabel">Circuit breaker</div><div class="mval" id="cbs" style="font-size:14px;color:#1baf7a">CLOSED</div><div class="mdelta up" id="cbd">Payment ok</div></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="ptitle">1. API Gateway — Transparency Layer <span class="badge bb">Comp 1</span></div>
+        <div class="fstep"><div class="snum" style="background:#e6f1fb;color:#185fa5">C</div><div><div class="ftitle">POST /api/v1/order</div><div class="fdesc">Single public endpoint — hides all internal topology</div></div></div>
+        <div class="fstep"><div class="snum" style="background:#eaf3de;color:#3b6d11">G</div><div><div class="ftitle">Gateway validates + adds x-request-id</div><div class="fdesc">Orchestrates 3 internal calls transparently</div><div class="fsvc">apiGateway.ts</div></div></div>
+        <div class="fstep"><div class="snum" style="background:#faeeda;color:#854f0b">K</div><div><div class="ftitle">Kitchen ← /internal/prepare</div><div class="fdesc">Validates via gRPC → Inventory (binary proto)</div><div class="fsvc">inventory.proto · grpcServer.ts</div></div></div>
+        <div class="fstep"><div class="snum" style="background:#fcebeb;color:#a32d2d">B</div><div><div class="ftitle">Billing ← /internal/charge</div><div class="fdesc">Idempotent charge with circuit-broken payment API</div><div class="fsvc">paymentService.ts</div></div></div>
+        <div class="fstep"><div class="snum" style="background:#f0ecff;color:#4a3aa7">D</div><div><div class="ftitle">Delivery ← /internal/dispatch</div><div class="fdesc">Non-fatal async — compensating tx on failure</div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ptitle">3. Load Balancer — Least Connections <span class="badge gb">Comp 3</span></div>
+        <div id="lbpool">
+          <div class="nrow"><div class="dot dg" id="d1"></div><div class="nn">order-svc-1 :3010</div><div class="nm">healthy</div><div class="nc" id="c1">4 conn</div></div>
+          <div class="nrow"><div class="dot dg" id="d2"></div><div class="nn">order-svc-2 :3011</div><div class="nm">healthy</div><div class="nc" id="c2">1 conn</div></div>
+          <div class="nrow"><div class="dot dg" id="d3"></div><div class="nn">order-svc-3 :3012</div><div class="nm">healthy</div><div class="nc" id="c3">7 conn</div></div>
+        </div>
+        <div class="nextnod">Next request → <strong id="nn">order-svc-2</strong> (least = 1 conn)</div>
+        <div class="ctls">
+          <button onclick="addReq()">Simulate request</button>
+          <button onclick="killNode()">Kill node 3</button>
+          <button onclick="healNode()">Heal all</button>
+        </div>
+        <div class="log" id="llog"><div class="ll"><span class="lt">00:00</span><span class="linf ls">[LB]</span><span>Least-connections pool initialised</span></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ptitle">4. Circuit Breaker + Idempotency <span class="badge ab">Comp 4</span></div>
+        <div class="cb3">
+          <div class="cbs scl" id="cbc"><div class="cbl">CLOSED</div><div class="cbd">Calls flow to payment API</div></div>
+          <div class="cbs sop" id="cbo" style="opacity:.35"><div class="cbl">OPEN</div><div class="cbd">Fallback: Cash on Delivery</div></div>
+          <div class="cbs sho" id="cbh" style="opacity:.35"><div class="cbl">HALF-OPEN</div><div class="cbd">Probing — 1 test call</div></div>
+        </div>
+        <div class="cbbar-wrap">
+          <div class="cbbar-track"><div class="cbbar" id="cbbar" style="width:0%;background:#1baf7a"></div></div>
+          <span class="cbfails" id="cbf">0 / 5 failures</span>
+        </div>
+        <div class="ctls">
+          <button onclick="payOk()">✓ Payment ok</button>
+          <button onclick="payFail()">✗ Fail payment</button>
+          <button onclick="resetCb()">Reset breaker</button>
+        </div>
+        <div class="idem-info">Idempotency cache: <strong id="ic">17 keys</strong> · prevents duplicate charges on retry</div>
+        <div class="log" id="cblog"><div class="ll"><span class="lt">00:00</span><span class="lok ls">[CB]</span><span>CLOSED — payment API nominal</span></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ptitle">5. Database Sharding <span class="badge rb">Comp 5</span></div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Range shards</div>
+        <div class="srow"><span class="sk" style="color:#185fa5">ALPHA</span><span class="sr">IDs 1 – 1M</span><div class="sbw"><div class="sb" style="width:65%;background:#2a78d6"></div></div><span class="sl">65%</span></div>
+        <div class="srow"><span class="sk" style="color:#3b6d11">BETA</span><span class="sr">1M – 5M</span><div class="sbw"><div class="sb" style="width:42%;background:#1baf7a"></div></div><span class="sl">42%</span></div>
+        <div class="srow"><span class="sk" style="color:#e34948">GAMMA</span><span class="sr">5M – ∞</span><div class="sbw"><div class="sb" style="width:89%;background:#e34948"></div></div><span class="sl" style="color:#e34948">89%</span></div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 5px">Geo shards</div>
+        <div class="srow"><span class="sk" style="color:#4a3aa7">EU</span><span class="sr">GB DE FR NL IT…</span><div class="sbw"><div class="sb" style="width:51%;background:#4a3aa7"></div></div><span class="sl">51%</span></div>
+        <div class="srow"><span class="sk" style="color:#eb6834">US</span><span class="sr">US CA MX BR…</span><div class="sbw"><div class="sb" style="width:71%;background:#eb6834"></div></div><span class="sl">71%</span></div>
+        <div class="srow"><span class="sk" style="color:#1baf7a">APAC</span><span class="sr">JP AU SG IN…</span><div class="sbw"><div class="sb" style="width:38%;background:#1baf7a"></div></div><span class="sl">38%</span></div>
+        <div class="ctls">
+          <button onclick="routeQ(500000)">Route 500K</button>
+          <button onclick="routeQ(2000000)">Route 2M</button>
+          <button onclick="routeQ(7500000)">Route 7.5M</button>
+          <button onclick="scatter()">Scatter-gather</button>
+        </div>
+        <div class="log" id="slog"><div class="ll"><span class="lt">00:00</span><span class="linf ls">[SHARD]</span><span>3 range shards + 3 geo shards active</span></div></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const ts=()=>new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const addLog=(id,cls,svc,msg)=>{const l=document.getElementById(id);const d=document.createElement('div');d.className='ll';d.innerHTML=`<span class="lt">${ts()}</span><span class="${cls} ls">[${svc}]</span><span>${msg}</span>`;l.prepend(d);while(l.children.length>12)l.lastChild.remove();};
+    const pool=[{id:'c1',did:'d1',name:'order-svc-1',conn:4,h:true},{id:'c2',did:'d2',name:'order-svc-2',conn:1,h:true},{id:'c3',did:'d3',name:'order-svc-3',conn:7,h:true}];
+    function lbUI(){pool.forEach(n=>{document.getElementById(n.id).textContent=n.h?n.conn+' conn':'DOWN';document.getElementById(n.did).className='dot '+(n.h?'dg':'dr');});const hlt=pool.filter(n=>n.h);if(!hlt.length){document.getElementById('nn').textContent='NO HEALTHY NODES';return;}const best=hlt.reduce((a,b)=>a.conn<=b.conn?a:b);document.getElementById('nn').textContent=best.name+' (least='+best.conn+')';}
+    function addReq(){const hlt=pool.filter(n=>n.h);if(!hlt.length){addLog('llog','lerr','LB','503 — all nodes down');return;}const b=hlt.reduce((a,c)=>a.conn<=c.conn?a:c);b.conn++;addLog('llog','linf','LB','→ '+b.name+' (conn='+b.conn+')');lbUI();setTimeout(()=>{b.conn=Math.max(0,b.conn-1);lbUI();},800+Math.random()*1800);}
+    function killNode(){const n=pool[2];n.h=false;n.conn=0;addLog('llog','lerr','HC','❌ order-svc-3 UNHEALTHY — removed');document.getElementById('nodes').textContent='2/3';document.getElementById('nd').textContent='1 node down';document.getElementById('nd').className='mdelta down';lbUI();}
+    function healNode(){pool.forEach(n=>n.h=true);addLog('llog','lok','HC','✅ All nodes healthy — pool restored');document.getElementById('nodes').textContent='3/3';document.getElementById('nd').textContent='All healthy';document.getElementById('nd').className='mdelta up';lbUI();}
+
+    let cbF=0,cbSt='CLOSED',iC=17;
+    function setCb(s){cbSt=s;const map={CLOSED:'cbc',OPEN:'cbo',HALF_OPEN:'cbh'};Object.keys(map).forEach(k=>{const el=document.getElementById(map[k]);el.style.opacity=k===s?'1':'0.35';});const sv=document.getElementById('cbs');sv.textContent=s.replace('_','-');sv.style.color=s==='CLOSED'?'#1baf7a':s==='OPEN'?'#e34948':'#eda100';const dd=document.getElementById('cbd');dd.textContent=s==='CLOSED'?'Payment ok':s==='OPEN'?'Cash on Delivery':'Probing…';dd.className='mdelta '+(s==='CLOSED'?'up':s==='OPEN'?'down':'neu');}
+    function updBar(){const p=Math.min(100,cbF/5*100);const b=document.getElementById('cbbar');b.style.width=p+'%';b.style.background=p>=100?'#e34948':p>60?'#eda100':'#1baf7a';document.getElementById('cbf').textContent=cbF+' / 5 failures';}
+    function payOk(){if(cbSt==='OPEN'){addLog('cblog','lwrn','CB','OPEN — blocked → Cash on Delivery fallback');return;}if(cbSt==='HALF_OPEN'){cbF=0;setCb('CLOSED');addLog('cblog','lok','CB','Probe succeeded → CLOSED ✅');updBar();return;}cbF=Math.max(0,cbF-1);iC++;document.getElementById('idem').textContent=iC;document.getElementById('ic').textContent=iC+' keys';addLog('cblog','lok','PAY','✅ Charged — txn_'+Math.random().toString(36).slice(2,8));updBar();}
+    function payFail(){if(cbSt==='HALF_OPEN'){setCb('OPEN');cbF=5;addLog('cblog','lerr','CB','Probe FAILED → back to OPEN');updBar();return;}if(cbSt==='OPEN'){addLog('cblog','lwrn','CB','Already OPEN — Cash on Delivery');return;}cbF++;addLog('cblog','lerr','PAY','❌ Gateway timeout ('+cbF+'/5)');if(cbF>=5){setCb('OPEN');addLog('cblog','lwrn','CB','⚡ TRIPPED OPEN — fallback active');setTimeout(()=>{setCb('HALF_OPEN');addLog('cblog','lwrn','CB','🔶 HALF-OPEN — probing payment API…');},5000);}updBar();}
+    function resetCb(){cbF=0;setCb('CLOSED');updBar();addLog('cblog','linf','CB','Breaker manually reset');}
+
+    function routeQ(id){let s,r;if(id<=1000000){s='ALPHA';r='1–1M';}else if(id<=5000000){s='BETA';r='1M–5M';}else{s='GAMMA';r='5M–∞';}addLog('slog','linf','SHARD','orderId='+id.toLocaleString()+' → Shard '+s+' (range '+r+')');}
+    function scatter(){addLog('slog','lwrn','SHARD','SCATTER-GATHER: fan-out to ALPHA+BETA+GAMMA…');setTimeout(()=>addLog('slog','lok','ALPHA','28 rows'),280);setTimeout(()=>addLog('slog','lok','BETA','41 rows'),560);setTimeout(()=>addLog('slog','lok','GAMMA','9 rows — merged & sorted by date ✅'),900);}
+
+    setInterval(()=>{document.getElementById('opm').textContent=128+Math.floor(Math.random()*30);document.getElementById('p99').innerHTML=(28+Math.floor(Math.random()*18))+'<span style="font-size:12px">ms</span>';},3500);
+    lbUI();
+  </script>
+</body>
+</html>

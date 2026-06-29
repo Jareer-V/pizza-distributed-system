@@ -22,8 +22,17 @@ function renderFrontend(res) {
   res.type('html').send(html);
 }
 
+function renderDashboard(res) {
+  const htmlPath = path.join(__dirname, 'dashboard.html');
+  let html = fs.readFileSync(htmlPath, 'utf8');
+  html = html.replace('__GATEWAY_URL__', gatewayUrl);
+  html = html.replace('__PORT__', String(port));
+  res.type('html').send(html);
+}
+
 app.get('/', (_req, res) => renderFrontend(res));
 app.get('/frontend.html', (_req, res) => renderFrontend(res));
+app.get('/dashboard', (_req, res) => renderDashboard(res));
 app.get('/health', (_req, res) => res.json({ status: 'UP' }));
 
 app.post('/api/v1/order', (req, res) => {
