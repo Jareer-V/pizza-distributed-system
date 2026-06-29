@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقرير مشروع PizzaChain الموزع</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff7ed;
+      --panel: #ffffff;
+      --accent: #ff7a00;
+      --accent-strong: #e96a00;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #fde7cc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: linear-gradient(135deg, #fff2e3 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px 40px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #ffb25f 0%, var(--accent) 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 24px 26px;
+      box-shadow: 0 16px 40px rgba(255,122,0,0.18);
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 28px; }
+    .hero p { margin: 0; opacity: 0.95; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 24px rgba(255,122,0,0.06);
+    }
+    h2 { font-size: 20px; margin: 0 0 10px; color: var(--accent-strong); }
+    h3 { font-size: 16px; margin: 10px 0 6px; }
+    p, li { font-size: 15px; color: var(--text); }
+    ul { padding-right: 18px; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff2e3;
+      color: var(--accent-strong);
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .mini {
+      background: #fffaf4;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+    code {
+      background: #fff4e8;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+    }
+    @media (max-width: 780px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <h1>تقرير مشروع PizzaChain: نظام طلبات بيتزا موزع</h1>
+      <p>هذا التقرير يشرح كيف يعمل المشروع، وما هي الطرق الموزعة التي تم تطبيقها، وكيفية اختبار العرض التوضيحي واستخداماته العملية مع أمثلة رقمية واضحة.</p>
+    </div>
+
+    <div class="card">
+      <div class="badge">1. مقدمة</div>
+      <p>مشروع PizzaChain هو نموذج تقني يوضح كيف يمكن بناء نظام طلبات للمطاعم أو المتاجر باستخدام بنية خدمات صغيرة موزعة. الهدف الرئيسي هو أن العميل يرسل طلبًا واحدًا فقط، بينما يتولى النظام الداخلي تقسيم العمل بين عدة خدمات مثل: بوابة الدخول، خدمة المخزون، خدمة الدفع، وخدمة التوصيل.</p>
+      <p>الفكرة الأساسية هي أن العميل لا يحتاج إلى معرفة أين توجد الخدمات أو كيف تتواصل مع بعضها. هذا ما يسمى بالشفافية في التصميم الموزع.</p>
+    </div>
+
+    <div class="card">
+      <div class="badge">2. كيف يعمل المشروع</div>
+      <div class="grid">
+        <div class="mini">
+          <h3>الخطوات الأساسية</h3>
+          <ul>
+            <li>العميل يرسل طلبًا عبر الواجهة الأمامية.</li>
+            <li>البوابة تستقبل الطلب من نقطة دخول واحدة.</li>
+            <li>البوابة تتواصل مع خدمة Kitchen للتحضير.</li>
+            <li>ثم تتواصل مع خدمة Billing للدفع.</li>
+            <li>وأخيرًا مع خدمة Delivery للتوصيل.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>مثال عملي</h3>
+          <p>إذا قدم العميل طلبًا لبيتزا مارغريتا بكمية 2 وسعر 12.99 دولار لكل قطعة، فإن النظام يحسب القيمة الكلية كالتالي:</p>
+          <p class="num">2 × 12.99 = 25.98</p>
+          <p>ثم يرسل الطلب إلى الخدمات الداخلية ويعيد النتيجة النهائية كطلب مؤكد.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="badge">3. الطرق الموزعة التي يعمل بها المشروع</div>
+      <h3>3.1 طبقة البوابة (API Gateway)</h3>
+      <p>البوابة هي نقطة الدخول الواحدة إلى النظام. بدلاً من أن يتعامل العميل مباشرة مع خدمات كثيرة، يرسل الطلب إلى بوابة واحدة فقط. هذه البوابة تقوم بتنظيم التدفق وإخفاء تفاصيل الخدمات الداخلية.</p>
+      <p>الفائدة: تبسيط الاتصال، تحسين الأمان، وسهولة التحكم في الطلبات.</p>
+
+      <h3>3.2 gRPC مع بروتوكول Protobuf</h3>
+      <p>تم استخدام gRPC بين المكونات التي تحتاج سرعة عالية وتواصلًا منظمًا، خاصةً في خدمة المخزون. البروتوكول الثنائي أسرع وأكثر كفاءة من JSON في بعض الحالات.</p>
+      <p>الفائدة: سرعة أعلى، ثبات في الهيكل، وتوافق جيد بين الخدمات.</p>
+
+      <h3>3.3 موازن التحميل Least Connections</h3>
+      <p>عندما يتعرض النظام لحركة مرور كثيرة، يتم اختيار الخادم الذي لديه أقل عدد من الاتصالات الحالية. مثال: إذا كان هناك 3 خوادم بحالات 4، 1، 7 اتصالات، فإن النظام يختار الخادم الذي يحتوي على 1 اتصال فقط.</p>
+      <p>الفائدة: توزيع الطلبات بشكل عادل وتقليل الضغط على خادم واحد.</p>
+
+      <h3>3.4 Idempotency</h3>
+      <p>تمت إضافة مفتاح Idempotency Key لمنع تكرار العملية عند إعادة إرسال الطلب نفسه. وهذا مهم جدًا في حالة فشل الشبكة أو التكرار غير المقصود.</p>
+      <p>مثال: إذا أرسل العميل نفس الطلب مرتين، فسيتم التعامل معه كطلب واحد بدلًا من فرض رسوم مرتين.</p>
+
+      <h3>3.5 Circuit Breaker</h3>
+      <p>إذا فشلت خدمة الدفع أو أصبحت بطيئة جدًا، يتدخل Circuit Breaker ويوقف إرسال الطلبات إلى تلك الخدمة مؤقتًا لتفادي التراكم والشلل. بعد 5 فشلٍ متتالي، يتم فتح الدائرة.</p>
+      <p>الفائدة: حماية النظام من الأعطال المتتالية وتحسين الاستقرار.</p>
+
+      <h3>3.6 Sharding</h3>
+      <p>تم تقسيم البيانات إلى أقسام أو شظايا (Shards) حسب المعرف أو المنطقة الجغرافية. على سبيل المثال، يمكن توزيع الطلبات على شظايا مثل ALPHA وBETA وGAMMA بناءً على قيمة Order ID.</p>
+      <p>مثال: إذا كان Order ID = 2,000,000، فسيتم توجيهه إلى شارد BETA لأن قيمته تقع في النطاق من 1,000,000 إلى 5,000,000.</p>
+    </div>
+
+    <div class="card">
+      <div class="badge">4. كيف يتم اختبار العرض التوضيحي</div>
+      <h3>4.1 التشغيل محليًا</h3>
+      <ol>
+        <li>تنفيذ <code>npm install</code></li>
+        <li>تشغيل الخدمات الوهمية: <code>npm run mock-services</code></li>
+        <li>تشغيل البوابة: <code>npm run gateway</code></li>
+        <li>فتح صفحة الواجهة الأمامية في المتصفح.</li>
+        <li>ضغط زر <strong>Place Order</strong>.</li>
+      </ol>
+
+      <h3>4.2 اختبار الطلب عبر API</h3>
+      <p>يمكن اختبار النظام مباشرة عبر طلب HTTP إلى نقطة الدخول:</p>
+      <code>POST /api/v1/order</code>
+      <p>مثال JSON:</p>
+      <code>{"customerId":"cust-demo-001","items":[{"productId":"PIZZA_MARGHERITA","name":"Margherita Pizza","qty":1,"price":12.99}],"deliveryAddress":"42 Baker Street, London","paymentMethod":"card","idempotencyKey":"demo-key-001"}</code>
+      <p>النتيجة المتوقعة هي استجابة بـ <strong>201 Created</strong> مع Order ID وTracking ID وTransaction ID.</p>
+
+      <h3>4.3 ما الذي يجب ملاحظته عند الاختبار؟</h3>
+      <ul>
+        <li>أن الطلب يُقبل بنجاح.</li>
+        <li>أن الخدمة تعيد حالة <strong>CONFIRMED</strong>.</li>
+        <li>أن لا يحدث دفع مزدوج عند إعادة الإرسال نفسه.</li>
+        <li>أن البوابة تُظهر Trace ID أو Request ID لمتابعة الطلب.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="badge">5. حالات الاستخدام العملية</div>
+      <h3>الحالة 1: طلب بيتزا عادي</h3>
+      <p>عميل يطلب 1 بيتزا مارغريتا بسعر 12.99 دولار، ويختار الدفع بالبطاقة. النظام ينجح في التحضير والدفع والتوصيل، ويعيد وقت تقديري للتوصيل يبلغ 30 دقيقة.</p>
+
+      <h3>الحالة 2: ذروة الحركة</h3>
+      <p>إذا وصل عدد الطلبات إلى 100 طلب/دقيقة، فسيتم توزيعها على الخوادم بناءً على أقل عدد اتصالات. هذا يقلل من التكدس ويحسن الاستجابة.</p>
+
+      <h3>الحالة 3: إعادة إرسال الطلب</h3>
+      <p>إذا فشل الطلب الشبكي بعد الإرسال، فإن مفتاح Idempotency Key يمنع فرض رسوم مرتين. هذا مهم جدًا في الأنظمة التجارية.</p>
+
+      <h3>الحالة 4: فشل الخدمة</h3>
+      <p>إذا تعطلت خدمة الدفع، سيبدأ Circuit Breaker بالحماية. بدلًا من استمرار محاولات الفشل، يمر الطلب إلى حالة بديلة أو يُظهر فشلًا واضحًا للمستخدم.</p>
+
+      <h3>الحالة 5: البيانات الكبيرة</h3>
+      <p>عند وجود ملايين الطلبات، يعتمد النظام على Sharding لتوزيع البيانات بين أكثر من شارد، ما يحسن الأداء ويجعل الاستعلامات أسرع.</p>
+    </div>
+
+    <div class="card">
+      <div class="badge">6. الخلاصة</div>
+      <p>مشروع PizzaChain يُظهر كيف يمكن تطبيق مفاهيم الأنظمة الموزعة عمليًا باستخدام بنية بسيطة لكن واقعية. المشروع لا يركز فقط على واجهة المستخدم، بل يوضح أيضًا كيف يمكن تصميم نظام يدعم التوسع، المرونة، والحماية من الأعطال باستخدام أدوات مثل البوابة، gRPC، موازن التحميل، Idempotency، Circuit Breaker، وSharding.</p>
+      <p>هذا يجعل المشروع مناسبًا جدًا كعرض عملي لمادة الأنظمة الموزعة أو هندسة البرمجيات.</p>
+    </div>
+  </div>
+</body>
+</html>

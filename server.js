@@ -33,6 +33,9 @@ function renderDashboard(res) {
 app.get('/', (_req, res) => renderFrontend(res));
 app.get('/frontend.html', (_req, res) => renderFrontend(res));
 app.get('/dashboard', (_req, res) => renderDashboard(res));
+app.get('/report-arabic', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'report-arabic.html'));
+});
 app.get('/health', (_req, res) => res.json({ status: 'UP' }));
 
 app.post('/api/v1/order', (req, res) => {
