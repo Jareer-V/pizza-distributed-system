@@ -4,14 +4,14 @@
   "description": "Highly scalable fault-tolerant distributed e-commerce system for a pizza & fast-food delivery chain",
   "scripts": {
     "build": "tsc",
+    "start": "node server.js",
     "gateway": "ts-node src/gateway/apiGateway.ts",
     "inventory-grpc": "ts-node src/inventory/grpcServer.ts",
     "loadbalancer": "ts-node src/loadbalancer/leastConnections.ts",
     "billing": "ts-node paymentService.ts",
     "shards": "ts-node shardRouter.ts",
     "mock-services": "node mockServices.js",
-    "dev:all": "concurrently \"npm run gateway\" \"npm run inventory-grpc\" \"npm run loadbalancer\"",
-    "start": "npm run dev:all"
+    "dev:all": "concurrently \"npm run gateway\" \"npm run inventory-grpc\" \"npm run loadbalancer\""
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.10.0",
