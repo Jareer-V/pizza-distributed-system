@@ -6,20 +6,36 @@
   <title>PizzaChain Dashboard</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    .wrap{font-family:"Anthropic Sans",system-ui,sans-serif;padding:0 0 16px;color:var(--text-primary)}
-    h2{font-size:16px;font-weight:500;margin-bottom:2px}
+    :root {
+      color-scheme: light;
+      --bg: #fff7ed;
+      --panel: #ffffff;
+      --accent: #ff7a00;
+      --accent-strong: #e96a00;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #fde7cc;
+      --surface-0: #fffaf4;
+      --surface-1: #fffdf9;
+      --surface-2: #ffffff;
+      --border-strong: rgba(255,122,0,0.28);
+    }
+    body { margin:0; background: radial-gradient(circle at top left, #fff2e3 0%, var(--bg) 45%, #fffdf9 100%); color:var(--text-primary); }
+    .wrap{font-family:"Segoe UI",Roboto,Arial,sans-serif;padding:24px 24px 16px;color:var(--text-primary)}
+    h2{font-size:18px;font-weight:700;margin-bottom:4px}
     .sub{font-size:12px;color:var(--text-secondary);margin-bottom:16px}
     .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
-    .metric{background:var(--surface-1);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px}
-    .mlabel{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-    .mval{font-size:20px;font-weight:500;line-height:1}
+    .metric{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:12px 12px;box-shadow:0 8px 20px rgba(255,122,0,0.06)}
+    .mlabel{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+    .mval{font-size:20px;font-weight:700;line-height:1}
     .mdelta{font-size:10px;margin-top:3px}
     .up{color:#1baf7a}.down{color:#e34948}.neu{color:var(--text-secondary)}
     .panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .panel{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:14px}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 10px 24px rgba(255,122,0,0.07)}
     .ptitle{font-size:12px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-    .badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500}
-    .bb{background:#e6f1fb;color:#185fa5}.gb{background:#eaf3de;color:#3b6d11}.ab{background:#faeeda;color:#854f0b}.rb{background:#fcebeb;color:#a32d2d}
+    .badge{font-size:9px;padding:2px 6px;border-radius:999px;font-weight:700}
+    .bb{background:#fff2e3;color:var(--accent-strong)}.gb{background:#fff2e3;color:var(--accent-strong)}.ab{background:#fff2e3;color:var(--accent-strong)}.rb{background:#fff2e3;color:var(--accent-strong)}
     .nrow{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px}
     .nrow:last-child{border-bottom:none}
     .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -42,8 +58,8 @@
     .sb{height:100%;border-radius:2px;transition:width .4s}
     .sl{min-width:30px;text-align:right;font-size:10px}
     .ctls{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-    button{background:transparent;border:0.5px solid var(--border-strong,rgba(11,11,11,.25));border-radius:5px;padding:4px 9px;font-size:11px;cursor:pointer;color:var(--text-primary);font-family:inherit;transition:background .15s}
-    button:hover{background:var(--surface-0,#f1efe8)}
+    button{background:white;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;color:var(--accent-strong);font-family:inherit;transition:all .15s ease;box-shadow:0 4px 10px rgba(255,122,0,0.06)}
+    button:hover{background:var(--accent);color:white;border-color:var(--accent)}
     .log{background:var(--surface-0,#f1efe8);border-radius:6px;padding:8px 10px;font-family:monospace;font-size:10px;line-height:1.7;max-height:130px;overflow-y:auto;margin-top:8px;color:var(--text-secondary)}
     .ll{display:flex;gap:6px}.lt{color:var(--text-muted);flex-shrink:0}.ls{font-weight:600}
     .lok{color:#1baf7a}.lwrn{color:#eda100}.lerr{color:#e34948}.linf{color:#2a78d6}
