@@ -23,6 +23,23 @@ const uuidv4 = randomUUID;
 
 const app = express();
 app.use(express.json());
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin || '*';
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Vary', 'Origin');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-request-id, x-gateway-secret, Idempotency-Key');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+app.options('/api/v1/order', (_req: Request, res: Response) => {
+  res.sendStatus(204);
+});
 
 // ── Service Registry ──────────────────────────────────────────
 // In production this would be a service-discovery system (Consul,

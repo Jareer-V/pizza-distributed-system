@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PizzaChain PoC</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fff7ed;
+      --panel: #ffffff;
+      --accent: #ff7a00;
+      --accent-strong: #e96a00;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #fde7cc;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #fff2e3 0%, var(--bg) 45%, #fffdf9 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .shell {
+      max-width: 860px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(255, 122, 0, 0.12);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 28px 32px 16px;
+      background: linear-gradient(135deg, #ffb25f 0%, #ff7a00 100%);
+      color: white;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.2);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 1.8rem; }
+    .subtitle { margin: 0; opacity: 0.95; max-width: 620px; line-height: 1.5; }
+
+    .content { padding: 24px 32px 32px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    label { display: block; margin-top: 10px; font-weight: 700; font-size: 0.95rem; }
+    input, select, button {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #e5cda7;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.15); }
+
+    button {
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 20px rgba(233, 106, 0, 0.2);
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.8; cursor: wait; transform: none; }
+
+    .hint { color: var(--muted); font-size: 0.95rem; margin-top: 8px; line-height: 1.45; }
+
+    .result {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #fffaf4;
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      min-height: 92px;
+    }
+
+    .result.success { border-color: #7dd3a8; background: #f2fff7; }
+    .result.error { border-color: #f59e9e; background: #fff5f5; }
+
+    @media (max-width: 700px) {
+      .grid { grid-template-columns: 1fr; }
+      .content, .hero { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div class="eyebrow">Distributed Pizza Demo</div>
+      <h1>Place an order and watch the flow come together</h1>
+      <p class="subtitle">This proof of concept routes a single request through the gateway, kitchen, billing, and delivery services so the experience feels like a real distributed checkout.</p>
+    </div>
+
+    <div class="content">
+      <div class="grid">
+        <div class="panel">
+          <label>Customer ID</label>
+          <input id="customerId" value="cust-demo-001" />
+
+          <label>Delivery Address</label>
+          <input id="deliveryAddress" value="42 Baker Street, London" />
+
+          <label>Product</label>
+          <select id="productSelect">
+            <option value="PIZZA_MARGHERITA">Margherita Pizza</option>
+            <option value="PIZZA_PEPPERONI">Pepperoni Pizza</option>
+            <option value="PIZZA_BBQCHICKEN">BBQ Chicken Pizza</option>
+          </select>
+        </div>
+
+        <div class="panel">
+          <label>Payment Method</label>
+          <select id="paymentMethod">
+            <option value="card">Card</option>
+            <option value="cash">Cash</option>
+          </select>
+
+          <div class="grid" style="margin-top: 0; gap: 12px;">
+            <div>
+              <label>Quantity</label>
+              <input id="qty" type="number" value="1" min="1" />
+            </div>
+            <div>
+              <label>Price</label>
+              <input id="price" type="number" value="12.99" step="0.01" />
+            </div>
+          </div>
+
+          <label>Idempotency Key</label>
+          <input id="idempotencyKey" value="demo-key-001" />
+
+          <button id="submitBtn">Place Order</button>
+          <p class="hint">The frontend talks to the gateway over HTTP while the downstream services run locally behind it.</p>
+        </div>
+      </div>
+
+      <div id="result" class="result">No request sent yet. Fill in the details and submit a sample order.</div>
+    </div>
+  </div>
+
+  <script>
+    const submitBtn = document.getElementById('submitBtn');
+    const resultBox = document.getElementById('result');
+
+    submitBtn.addEventListener('click', async () => {
+      submitBtn.disabled = true;
+      resultBox.className = 'result';
+      resultBox.textContent = 'Submitting order...';
+
+      const productSelect = document.getElementById('productSelect');
+      const payload = {
+        customerId: document.getElementById('customerId').value,
+        items: [{
+          productId: productSelect.value,
+          name: productSelect.options[productSelect.selectedIndex].text,
+          qty: Number(document.getElementById('qty').value),
+          price: Number(document.getElementById('price').value),
+        }],
+        deliveryAddress: document.getElementById('deliveryAddress').value,
+        paymentMethod: document.getElementById('paymentMethod').value,
+        idempotencyKey: document.getElementById('idempotencyKey').value,
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': payload.idempotencyKey,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        const formatted = JSON.stringify({ status: response.status, data }, null, 2);
+        resultBox.textContent = formatted;
+        resultBox.className = response.ok ? 'result success' : 'result error';
+      } catch (error) {
+        resultBox.textContent = 'Request failed: ' + error.message;
+        resultBox.className = 'result error';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
