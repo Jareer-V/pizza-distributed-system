@@ -15,9 +15,24 @@
 
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
+import fs from 'fs';
 import path from 'path';
 
-const PROTO_PATH = path.resolve(__dirname, '../../proto/inventory.proto');
+function resolveProtoPath(): string {
+  const candidates = [
+    path.resolve(process.cwd(), 'proto/inventory.proto'),
+    path.resolve(process.cwd(), 'inventory.proto'),
+  ];
+
+  const existing = candidates.find(candidate => fs.existsSync(candidate));
+  if (!existing) {
+    throw new Error(`Could not find inventory.proto. Checked: ${candidates.join(', ')}`);
+  }
+
+  return existing;
+}
+
+const PROTO_PATH = resolveProtoPath();
 
 const packageDef = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,

@@ -205,16 +205,30 @@ lb.use('/', (req: Request, res: Response, next) => {
 });
 
 // ── Start the load balancer and health check timer ────────────
-const LB_PORT = process.env.LB_PORT || 8080;
+const LB_PORT = Number.parseInt(process.env.LB_PORT || '8080', 10);
 
-lb.listen(LB_PORT, () => {
-  console.log(`[LoadBalancer] Listening on :${LB_PORT} — algorithm: LEAST CONNECTIONS`);
+function startServer(port: number) {
+  const server = lb.listen(port, () => {
+    console.log(`[LoadBalancer] Listening on :${port} — algorithm: LEAST CONNECTIONS`);
 
-  // Kick off health checks immediately, then on interval
-  runHealthChecks();
-  setInterval(runHealthChecks, HEALTH_CHECK_INTERVAL_MS);
-  console.log(`[LoadBalancer] Health checks every ${HEALTH_CHECK_INTERVAL_MS / 1000}s`);
-});
+    // Kick off health checks immediately, then on interval
+    runHealthChecks();
+    setInterval(runHealthChecks, HEALTH_CHECK_INTERVAL_MS);
+    console.log(`[LoadBalancer] Health checks every ${HEALTH_CHECK_INTERVAL_MS / 1000}s`);
+  });
+
+  server.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+      const fallbackPort = port + 1;
+      console.warn(`[LoadBalancer] Port ${port} in use; retrying on ${fallbackPort}`);
+      server.close(() => startServer(fallbackPort));
+    } else {
+      throw err;
+    }
+  });
+}
+
+startServer(LB_PORT);
 
 // ── Simulation helper (for testing without real backends) ─────
 export function simulateLeastConnections(

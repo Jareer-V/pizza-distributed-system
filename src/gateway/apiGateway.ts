@@ -17,7 +17,9 @@
  */
 
 import express, { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
+
+const uuidv4 = randomUUID;
 
 const app = express();
 app.use(express.json());
@@ -26,9 +28,9 @@ app.use(express.json());
 // In production this would be a service-discovery system (Consul,
 // Kubernetes DNS). Here we simulate it with a static map.
 const SERVICE_REGISTRY: Record<string, string> = {
-  kitchen:  process.env.KITCHEN_URL  || 'http://kitchen-service:3001',
-  billing:  process.env.BILLING_URL  || 'http://billing-service:3002',
-  delivery: process.env.DELIVERY_URL || 'http://delivery-service:3003',
+  kitchen:  process.env.KITCHEN_URL  || 'http://127.0.0.1:3001',
+  billing:  process.env.BILLING_URL  || 'http://127.0.0.1:3002',
+  delivery: process.env.DELIVERY_URL || 'http://127.0.0.1:3003',
 };
 
 // ── Types ─────────────────────────────────────────────────────
@@ -81,7 +83,17 @@ async function callService<T>(
       signal: AbortSignal.timeout(8_000),             // 8 s timeout per call
     });
 
-    const body = await res.json() as T;
+    const text = await res.text();
+    let body: T | undefined;
+
+    if (text) {
+      try {
+        body = JSON.parse(text) as T;
+      } catch {
+        body = { raw: text } as T;
+      }
+    }
+
     return { ok: res.ok, data: body };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
